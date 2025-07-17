@@ -9,9 +9,7 @@ const App = () => {
   const EMPLOYEES_PER_PAGE = 10;
 
   useEffect(() => {
-    fetch(
-      "https://geektrust.s3-ap-southeast-1.amazonaws.com/adminui-problem/members.json"
-    )
+    fetch("https://geektrust.s3-ap-southeast-1.amazonaws.com/adminui-problem/members.json")
       .then((response) => {
         if (!response.ok) {
           throw new Error("Failed to fetch data");
@@ -40,17 +38,14 @@ const App = () => {
   };
 
   const startIndex = (currentPage - 1) * EMPLOYEES_PER_PAGE;
-  const currentEmployees = employees.slice(
-    startIndex,
-    startIndex + EMPLOYEES_PER_PAGE
-  );
+  const currentEmployees = employees.slice(startIndex, startIndex + EMPLOYEES_PER_PAGE);
 
   return (
     <div className="container">
       <h2>Employee List</h2>
 
       {employees.length > 0 ? (
-        <table border="1" cellPadding="10" cellSpacing="0">
+        <table data-testid="employee-table" border="1" cellPadding="10" cellSpacing="0">
           <thead>
             <tr>
               <th>ID</th>
@@ -82,7 +77,7 @@ const App = () => {
         >
           Previous
         </button>
-        <span>
+        <span data-testid="page-indicator">
           Page {currentPage} of {totalPages}
         </span>
         <button
