@@ -5,20 +5,28 @@ const App = () => {
   const [employees, setEmployees] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const EMPLOYEES_PER_PAGE = 10;
 
   useEffect(() => {
-    fetch("https://geektrust.s3-ap-southeast-1.amazonaws.com/adminui-problem/members.json")
+    setLoading(true);
+    fetch(
+      "https://geektrust.s3-ap-southeast-1.amazonaws.com/adminui-problem/members.json"
+    )
       .then((response) => {
         if (!response.ok) {
           throw new Error("Failed to fetch data");
         }
         return response.json();
       })
-      .then((data) => setEmployees(data))
+      .then((data) => {
+        setEmployees(data);
+        setLoading(false);
+      })
       .catch((error) => {
         setError(error.message);
+        setLoading(false);
         alert("failed to fetch data");
       });
   }, []);
@@ -38,14 +46,22 @@ const App = () => {
   };
 
   const startIndex = (currentPage - 1) * EMPLOYEES_PER_PAGE;
-  const currentEmployees = employees.slice(startIndex, startIndex + EMPLOYEES_PER_PAGE);
+  const currentEmployees = employees.slice(
+    startIndex,
+    startIndex + EMPLOYEES_PER_PAGE
+  );
+
+  // Don't render anything if still loading
+  if (loading) {
+    return <div className="container"><p>Loading data...</p></div>;
+  }
 
   return (
     <div className="container">
       <h2>Employee List</h2>
 
       {employees.length > 0 ? (
-        <table data-testid="employee-table" border="1" cellPadding="10" cellSpacing="0">
+        <table border="1" cellPadding="10" cellSpacing="0">
           <thead>
             <tr>
               <th>ID</th>
@@ -66,28 +82,31 @@ const App = () => {
           </tbody>
         </table>
       ) : (
-        !error && <p>Loading data...</p>
+        !error && <p>No data available</p>
       )}
 
-      <div className="pagination">
-        <button
-          onClick={handlePrevious}
-          disabled={currentPage === 1}
-          data-testid="previous-btn"
-        >
-          Previous
-        </button>
-        <span data-testid="page-indicator">
-          Page {currentPage} of {totalPages}
-        </span>
-        <button
-          onClick={handleNext}
-          disabled={currentPage === totalPages}
-          data-testid="next-btn"
-        >
-          Next
-        </button>
-      </div>
+      {/* Only show pagination when we have data */}
+      {employees.length > 0 && (
+        <div className="pagination">
+          <button
+            onClick={handlePrevious}
+            disabled={currentPage === 1}
+            data-testid="previous-btn"
+          >
+            Previous
+          </button>
+          <span>
+            {currentPage}
+          </span>
+          <button
+            onClick={handleNext}
+            disabled={currentPage === totalPages || totalPages === 0}
+            data-testid="next-btn"
+          >
+            Next
+          </button>
+        </div>
+      )}
     </div>
   );
 };
