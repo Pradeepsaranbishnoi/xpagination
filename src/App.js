@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import './App.css';
+import "./App.css";
+
 const App = () => {
   const [employees, setEmployees] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -27,11 +28,15 @@ const App = () => {
   const totalPages = Math.ceil(employees.length / EMPLOYEES_PER_PAGE);
 
   const handlePrevious = () => {
-    if (currentPage > 1) setCurrentPage((prev) => prev - 1);
+    if (currentPage > 1) {
+      setCurrentPage((prev) => prev - 1);
+    }
   };
 
   const handleNext = () => {
-    if (currentPage < totalPages) setCurrentPage((prev) => prev + 1);
+    if (currentPage < totalPages) {
+      setCurrentPage((prev) => prev + 1);
+    }
   };
 
   const startIndex = (currentPage - 1) * EMPLOYEES_PER_PAGE;
@@ -41,7 +46,7 @@ const App = () => {
   );
 
   return (
-    <div style={{ padding: "20px" }}>
+    <div className="container">
       <h2>Employee List</h2>
 
       {employees.length > 0 ? (
@@ -54,7 +59,7 @@ const App = () => {
               <th>Role</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody data-testid="employee-table-body">
             {currentEmployees.map((emp) => (
               <tr key={emp.id}>
                 <td>{emp.id}</td>
@@ -69,14 +74,22 @@ const App = () => {
         !error && <p>Loading data...</p>
       )}
 
-      <div style={{ marginTop: "20px" }}>
-        <button onClick={handlePrevious} disabled={currentPage === 1}>
+      <div className="pagination">
+        <button
+          onClick={handlePrevious}
+          disabled={currentPage === 1}
+          data-testid="previous-btn"
+        >
           Previous
         </button>
-        <span style={{ margin: "0 10px" }}>
+        <span>
           Page {currentPage} of {totalPages}
         </span>
-        <button onClick={handleNext} disabled={currentPage === totalPages}>
+        <button
+          onClick={handleNext}
+          disabled={currentPage === totalPages}
+          data-testid="next-btn"
+        >
           Next
         </button>
       </div>
